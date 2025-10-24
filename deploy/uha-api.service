@@ -1,0 +1,44 @@
+[Unit]
+Description=UHA API Service
+Documentation=https://github.com/aybllc/uha-api-service
+After=network.target
+
+[Service]
+Type=notify
+User=uha-api
+Group=uha-api
+WorkingDirectory=/opt/uha-api
+
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/opt/uha-api"
+Environment="UHA_LOG_LEVEL=INFO"
+
+# Start command
+ExecStart=/usr/local/bin/gunicorn \
+    -c /opt/uha-api/deploy/gunicorn.conf.py \
+    app.main:app
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitInterval=0
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/uha-api/data /opt/uha-api/logs
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=uha-api
+
+[Install]
+WantedBy=multi-user.target

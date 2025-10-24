@@ -76,6 +76,119 @@ Nginx → FastAPI → UHA Engine
 
 **Total:** ~1.5-2 hours
 
+---
+
+## Deployment Instructions
+
+### Prerequisites
+✅ Server setup complete (01U_SERVER_SETUP_GUIDE.md followed)
+✅ DNS configured (api.aybllc.org points to server)
+✅ Ports 80/443 open
+
+### Quick Deploy
+
+```bash
+# On 01u.aybllc.org, as root:
+cd /opt
+sudo ./uha-api-service/deploy/deploy.sh
+```
+
+This script will:
+1. Clone/update repository to `/opt/uha-api`
+2. Install Python dependencies
+3. Initialize database
+4. Install systemd service
+5. Configure Nginx
+6. Start services
+
+### SSL Certificate
+
+```bash
+# Obtain Let's Encrypt certificate
+sudo certbot --nginx -d api.aybllc.org
+
+# Verify auto-renewal
+sudo certbot renew --dry-run
+```
+
+### Create API Keys
+
+```bash
+# Create admin key
+cd /opt/uha-api
+python3.11 scripts/manage_keys.py admin
+
+# Create researcher key
+python3.11 scripts/manage_keys.py create "Jane Doe" jane@mit.edu "MIT"
+
+# List all keys
+python3.11 scripts/manage_keys.py list
+
+# View key statistics
+python3.11 scripts/manage_keys.py stats key_jane_abc123
+```
+
+### Test API
+
+```bash
+# Health check (no auth required)
+curl https://api.aybllc.org/v1/health
+
+# Test merge endpoint (requires API key)
+curl -X POST https://api.aybllc.org/v1/merge \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: uha_live_your_key_here" \
+  -d '{
+    "datasets": {
+      "planck": {
+        "H0": 67.4,
+        "Omega_m": 0.315,
+        "Omega_Lambda": 0.685,
+        "sigma": {"H0": 0.5, "Omega_m": 0.007}
+      },
+      "shoes": {
+        "H0": 73.04,
+        "sigma_H0": 1.04
+      }
+    }
+  }'
+```
+
+### Monitoring
+
+```bash
+# View service status
+sudo systemctl status uha-api
+
+# View logs (real-time)
+sudo journalctl -u uha-api -f
+
+# View Nginx logs
+sudo tail -f /var/log/nginx/uha-api-access.log
+
+# Check API metrics
+python3.11 scripts/manage_keys.py stats <key_id>
+```
+
+### Troubleshooting
+
+```bash
+# Restart service
+sudo systemctl restart uha-api
+
+# Check service errors
+sudo journalctl -u uha-api -n 50 --no-pager
+
+# Test Nginx config
+sudo nginx -t
+
+# Reload Nginx
+sudo systemctl reload nginx
+
+# Check SELinux denials
+sudo ausearch -m avc -ts recent | grep uha
+```
+
 ## Status
 
 - [x] Documentation complete
