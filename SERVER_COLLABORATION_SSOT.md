@@ -30,11 +30,24 @@ This file serves as a shared workspace between:
 
 ### Infrastructure
 - ✅ Domain: aybllc.org (owned)
-- 🟡 DNS: Needs A record: `api.aybllc.org` → server IP
-- 🟡 Server: Rocky Linux 10 ready
-- 🟡 GitHub Access: Pending setup (see `/got/GITHUB_ACCESS_SETUP.md`)
+- ⭕ DNS: Needs A record: `api.aybllc.org` → 146.190.119.6
+- ✅ Server: Rocky Linux 10 - Setup complete (pending reboot)
+- ✅ GitHub Access: Complete - authenticated as abba-01
 - ⭕ SSL Certificate: Pending (after DNS)
-- ⭕ Firewall: Ports 80/443 need opening
+- ✅ Firewall: Ports 80/443/22 open
+
+### Server Setup (Phase 1-9 Complete)
+- ✅ Python 3.12.9 installed (newer than required 3.11)
+- ✅ Nginx 1.26.3 installed
+- ✅ Certbot 4.2.0 installed
+- ✅ SQLite 3.46.1 installed
+- ✅ GitHub CLI 2.82.1 authenticated
+- ✅ FastAPI 0.104.1 + all Python packages installed
+- ✅ Firewall configured (http/https/ssh)
+- ✅ Service user 'uha-api' created (uid=991)
+- ✅ Directory structure created at /opt/uha-api
+- ✅ SELinux configured (will be enforcing after reboot)
+- ✅ Server IP: 146.190.119.6
 
 ### Code Status
 - ✅ Architecture designed (see `/got/UHA_API_SERVICE_SSOT.md`)
@@ -44,7 +57,7 @@ This file serves as a shared workspace between:
 
 ### Repositories
 - ✅ `aybllc/uha-blackbox` - Exists (blackbox build system)
-- ⭕ `aybllc/uha-api-service` - Needs creation (private)
+- ✅ `aybllc/uha-api-service` - Exists (private, access verified)
 - ⭕ `aybllc/uha-client` - Needs creation (public)
 
 **Legend:**
@@ -60,7 +73,7 @@ This file serves as a shared workspace between:
 ### Phase 1: Environment Setup
 
 #### Task 1.1: Configure GitHub Access
-**Status:** ⭕ Not Started
+**Status:** ✅ COMPLETE
 **File:** `/got/GITHUB_ACCESS_SETUP.md`
 
 ```bash
@@ -71,21 +84,23 @@ gh repo list aybllc
 ```
 
 **Completion criteria:**
-- [ ] `gh auth status` shows "Logged in"
-- [ ] Can view `aybllc/uha-blackbox` repo
-- [ ] Git identity configured
+- [x] `gh auth status` shows "Logged in"
+- [x] Can view `aybllc/uha-blackbox` repo
+- [x] Git identity configured
 
 **Update here when done:**
 ```
-Status: [PENDING|COMPLETE|BLOCKED]
-Date completed: YYYY-MM-DD HH:MM
-Notes: <any issues or notes>
+Status: COMPLETE
+Date completed: 2025-10-24 17:02 UTC
+Account: abba-01
+Git identity: UHA API Server <server@aybllc.org>
+Notes: GitHub CLI already authenticated. Access to aybllc/uha-api-service verified.
 ```
 
 ---
 
 #### Task 1.2: Install System Dependencies
-**Status:** ⭕ Not Started
+**Status:** ✅ COMPLETE
 
 ```bash
 # Update system
@@ -109,23 +124,26 @@ certbot --version
 ```
 
 **Completion criteria:**
-- [ ] Python 3.11+ installed
-- [ ] Nginx installed
-- [ ] Certbot installed
-- [ ] All commands exit successfully
+- [x] Python 3.11+ installed
+- [x] Nginx installed
+- [x] Certbot installed
+- [x] All commands exit successfully
 
 **Update here when done:**
 ```
-Status: [PENDING|COMPLETE|BLOCKED]
-Python version: X.Y.Z
-Nginx version: X.Y.Z
-Notes: <any issues>
+Status: COMPLETE
+Date completed: 2025-10-24 17:00 UTC
+Python version: 3.12.9 (newer than required 3.11)
+Nginx version: 1.26.3
+Certbot version: 4.2.0
+SQLite version: 3.46.1
+Notes: System fully updated. All packages installed successfully. Python 3.12 is default on Rocky Linux 10.
 ```
 
 ---
 
 #### Task 1.3: Get Server IP Address
-**Status:** ⭕ Not Started
+**Status:** ✅ COMPLETE
 
 ```bash
 # Get public IP
@@ -137,8 +155,10 @@ curl -4 icanhazip.com
 
 **Report back:**
 ```
-Server Public IP: XXX.XXX.XXX.XXX
-IPv6 (if available): XXXX:XXXX:...
+Server Public IP: 146.190.119.6
+Local IPs: 146.190.119.6, 10.48.0.7, 10.124.0.8
+IPv6: Not configured
+Date: 2025-10-24 17:03 UTC
 ```
 
 ---
@@ -190,7 +210,7 @@ Date ready: YYYY-MM-DD HH:MM
 ---
 
 #### Task 2.2: Configure Firewall
-**Status:** ⭕ Not Started
+**Status:** ✅ COMPLETE
 
 ```bash
 # Check current firewall status
@@ -206,14 +226,16 @@ sudo firewall-cmd --list-services
 ```
 
 **Completion criteria:**
-- [ ] Port 80 open
-- [ ] Port 443 open
-- [ ] Services persistent (--permanent)
+- [x] Port 80 open
+- [x] Port 443 open
+- [x] Services persistent (--permanent)
 
 **Update here when done:**
 ```
-Status: [PENDING|COMPLETE|BLOCKED]
-Open ports: <list>
+Status: COMPLETE
+Date completed: 2025-10-24 17:01 UTC
+Open services: cockpit dhcpv6-client http https ssh
+Notes: Firewalld installed and configured. All required ports open.
 ```
 
 ---
@@ -221,7 +243,7 @@ Open ports: <list>
 ### Phase 3: Application Deployment
 
 #### Task 3.1: Create Application Directory
-**Status:** ⭕ Not Started
+**Status:** ✅ COMPLETE
 
 ```bash
 # Create service user
@@ -238,9 +260,20 @@ sudo usermod -a -G uha-api $USER
 ```
 
 **Completion criteria:**
-- [ ] User `uha-api` created
-- [ ] Directory `/opt/uha-api` exists
-- [ ] Correct permissions set
+- [x] User `uha-api` created
+- [x] Directory `/opt/uha-api` exists
+- [x] Correct permissions set
+
+**Update:**
+```
+Status: COMPLETE
+Date completed: 2025-10-24 17:01 UTC
+User ID: 991 (uha-api)
+Directory: /opt/uha-api (drwxr-x---)
+Subdirectories: app, client, tests, deploy, data (770), logs (770)
+SELinux contexts: Set for httpd operation
+Notes: All directory structure created with proper permissions and SELinux contexts.
+```
 
 ---
 
@@ -383,9 +416,12 @@ Location: <path or repo URL>
 
 | ID | Issue | Blocking | Owner | Status |
 |----|-------|----------|-------|--------|
-| B001 | DNS A record not configured | Phase 2 | User | Open |
-| B002 | GitHub access not set up | All git operations | Server Claude | Open |
-| B003 | Application code not written | Phase 3 | Desktop Claude | Open |
+| B001 | DNS A record not configured | SSL certificate, deployment | User | Open |
+| B002 | GitHub access not set up | All git operations | Server Claude | ✅ RESOLVED |
+| B003 | Application code not written | Phase 3-4 | Desktop Claude | Open |
+
+**Resolved Blockers:**
+- B002: Resolved 2025-10-24 17:02 UTC - GitHub CLI authenticated as abba-01 with access to aybllc repos
 
 **Add new blockers here:**
 ```
@@ -406,14 +442,25 @@ Resolution: <how it was resolved>
 - ✅ Updated for api.aybllc.org domain
 - ✅ Created GITHUB_ACCESS_SETUP.md
 - ✅ Created this collaboration SSOT
-- 🟡 Awaiting server setup completion
+- ⭕ Next: Create FastAPI application code
 
-**Server Claude:**
-- Status: Not yet started
-- Next action: Review this SSOT and begin Phase 1
+**Server Claude (17:00-17:03 UTC):**
+- ✅ Completed full 10-phase server setup (Phases 1-9)
+- ✅ Phase 1: System preparation complete
+- ✅ Phase 2: All dependencies installed (Python 3.12.9, Nginx 1.26.3, Certbot 4.2.0, SQLite 3.46.1)
+- ✅ Phase 3: Python packages installed (FastAPI, Uvicorn, etc.)
+- ✅ Phase 4: Firewall configured (ports 80/443/22)
+- ✅ Phase 5: Service user and directories created
+- ✅ Phase 6: SELinux configured (enforcing mode, will activate after reboot)
+- ✅ Phase 7: GitHub authentication verified
+- ✅ Phase 8: Network verified (Public IP: 146.190.119.6)
+- ✅ Phase 9: All systems verified
+- 🟡 Phase 10: Pending - Reboot required to enable SELinux
+- ⏸️ Next: Wait for application code from Desktop Claude, then reboot
 
 **User:**
-- Needs to: Add DNS A record for api.aybllc.org
+- ⭕ Action required: Add DNS A record for api.aybllc.org → 146.190.119.6
+- ⭕ Action required: Add DNS A record for 01u.aybllc.org → 146.190.119.6 (optional)
 - Domain: aybllc.org already owned
 
 ---
