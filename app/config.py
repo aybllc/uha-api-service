@@ -11,7 +11,7 @@ class Settings:
     # API Information
     API_TITLE = "UHA API Service"
     API_VERSION = "1.0.0"
-    API_DESCRIPTION = "Universal Hierarchical Aggregation API - Patent US 63/902,536"
+    API_DESCRIPTION = "Cosmological dataset aggregation and statistical analysis service"
     ORGANIZATION = "All Your Baseline LLC"
 
     # Server Configuration

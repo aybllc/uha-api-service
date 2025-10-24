@@ -1,8 +1,7 @@
 """
 UHA API Service - Main Application
 
-Universal Hierarchical Aggregation API
-Patent: US 63/902,536
+Cosmological dataset aggregation and statistical analysis.
 Organization: All Your Baseline LLC
 """
 import time
@@ -155,7 +154,6 @@ async def root():
         "service": settings.API_TITLE,
         "version": settings.API_VERSION,
         "organization": settings.ORGANIZATION,
-        "patent": "US 63/902,536",
         "docs": "/docs" if settings.DEBUG else "Contact support@aybllc.org",
     }
 
